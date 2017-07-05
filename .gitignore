@@ -65,3 +65,6 @@ typings/
 # End of https://www.gitignore.io/api/node
 
 head.sha1
+aurelia-app/scripts/app-bundle.js
+aurelia-app/scripts/app-bundle.js.map
+aurelia-app/scripts/vendor-bundle.js

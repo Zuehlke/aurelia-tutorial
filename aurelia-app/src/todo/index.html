@@ -1,0 +1,10 @@
+<template>
+    <require from="resources/elements/todo"></require>
+    <h3>Todos</h3>
+    <a route-href="route: Add new todo">Add new todo</a>
+    <ul>
+        <li repeat.for="item of todos">
+            <todo item.bind="item"></todo>
+        </li>
+    </ul>
+</template>
