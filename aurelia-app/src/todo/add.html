@@ -2,7 +2,7 @@
     <h3>Todos</h3>
     <h4>Add new todo</h4>
     <form submit.delegate="addTodo()">
-        <input type="text" value.bind="description">
+        <input type="text" value.bind="description & validate">
         <input type="date" value.bind="deadline">
         <select value.bind="priority">
             <option>High</option>
@@ -10,5 +10,10 @@
             <option>Low</option>
         </select>
         <button type="submit">Add todo</button>
+        <ul if.bind="validationController.errors" style="color: red">
+            <li repeat.for="error of validationController.errors">
+                ${error.message}
+            </li>
+        </ul>
     </form>
 </template>
