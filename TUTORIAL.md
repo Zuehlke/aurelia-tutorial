@@ -325,3 +325,77 @@ done() {
 ```
 
 ## Advanced tutorial
+
+### 6. Validation
+
+27. Execute `au install aurelia-validation` from the command line in the aurelia-app folder to install the aurelia-validation plugin (additional documentation about it can be found [here](http://aurelia.io/hub.html#/doc/article/aurelia/validation/latest/validation-basics)).
+
+28. Open the `main.ts` file and add the code `.plugin('aurelia-validation')` after the resources call.
+
+29. Open `resources/todo/add.ts` and add the inject part and extend the constructor:
+
+```
+import { bindable, inject, NewInstance } from 'aurelia-framework';
+import { ValidationController } from 'aurelia-validation';
+
+...
+@inject(TodoService, Router, NewInstance.of(ValidationController))
+export class Add {
+    description: string;
+    priority: string;
+    deadline: Date;
+
+    constructor(private todoService: TodoService, private router: Router, public validationController: ValidationController) {
+        this.initializeProperties();
+    }
+
+    ...
+}
+```
+
+30. Add setup for the validation rules and call to validate in `resources/todo/add.ts`:
+
+```
+...
+import { ValidationController, ValidationRules } from 'aurelia-validation';
+...
+export class Add {
+    ...
+    constructor(private todoService: TodoService, private router: Router, public validationController: ValidationController) {
+        this.initializeProperties();
+        this.initializeValidation();
+    }
+
+    initializeValidation() {
+        ValidationRules.ensure((o: Add) => o.description)
+            .required()
+            .on(this);
+    }
+    ...
+}
+```
+
+31. Add the `validate` binding behavior in the corresponding view (`resources/todo/add.html`):
+
+```
+...
+    <form submit.delegate="addTodo()">
+        <input type="text" value.bind="description & validate">
+...
+```
+
+32. Add a list to display validation errors in the view:
+
+```
+...
+        <button type="submit">Add todo</button>
+        <ul if.bind="validationController.errors" style="color: red">
+            <li repeat.for="error of validationController.errors">
+                ${error.message}
+            </li>
+        </ul>
+    </form>
+...
+```
+
+Note: You can also use a [custom renderer](http://aurelia.io/hub.html#/doc/article/aurelia/validation/latest/validation-basics/8) to abstract away the displaying of the errors.
