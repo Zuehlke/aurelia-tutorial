@@ -399,3 +399,82 @@ export class Add {
 ```
 
 Note: You can also use a [custom renderer](http://aurelia.io/hub.html#/doc/article/aurelia/validation/latest/validation-basics/8) to abstract away the displaying of the errors.
+
+### 7. I18n
+
+33. Execute `au install aurelia-i18n` from the command line in the aurelia-app folder to install the aurelia-i18n plugin (additional documentation about it can be found [here](http://aurelia.io/hub.html#/doc/article/aurelia/i18n/latest/i18n-with-aurelia/)). Add additional needed dependencies via npm: `npm install i18next i18next-xhr-backend --save`.
+
+34. Configure bundling for i18next and i18next-xhr-backend libraries in `aurelia_project/aurelia.json`. Add the following configuration in the `bundles/vendor-bundle.js` section:
+
+
+```
+{
+    "name": "i18next",
+    "path": "../node_modules/i18next/dist/umd",
+    "main": "i18next"
+},
+{
+    "name": "i18next-xhr-backend",
+    "path": "../node_modules/i18next-xhr-backend/dist/umd",
+    "main": "i18nextXHRBackend"
+}
+```
+
+35. Add the plugin configuration to the `main.ts` file:
+
+```
+import {I18N, Backend, TCustomAttribute} from 'aurelia-i18n';
+...
+export function configure(aurelia: Aurelia) {
+  aurelia.use
+    .standardConfiguration()
+    .feature('resources')
+    .plugin('aurelia-validation')
+    .plugin('aurelia-i18n', (instance) => {
+        let aliases = ['t', 'i18n'];
+        // add aliases for 't' attribute
+        TCustomAttribute.configureAliases(aliases);
+        
+        // register backend plugin
+        instance.i18next.use(Backend.with(aurelia.loader));
+
+        // adapt options to your needs (see http://i18next.com/docs/options/)
+        // make sure to return the promise of the setup method, in order to guarantee proper loading
+        return instance.setup({
+            backend: {                                  // <-- configure backend settings
+                loadPath: './locales/{{lng}}/{{ns}}.json', // <-- XHR settings for where to get the files from
+            },
+            attributes: aliases,
+            lng : 'de',
+            fallbackLng : 'en',
+            debug : false
+        });
+    });
+    ...
+```
+
+36. Configure the aurelia loader to not use stubs. Change the loader section in `aurelia_project/aurelia.json` to
+
+```
+"loader": {
+    "type": "require",
+    "configTarget": "vendor-bundle.js",
+    "includeBundleMetadataInConfig": "auto",
+    "plugins": [
+    {
+        "name": "text",
+        "extensions": [
+        ".html",
+        ".css"
+        ],
+        "stub": false
+    }
+    ]
+},
+```
+
+37. Start replacing strings:
+
+You can either use the t attribute on HTML elements or use `${'key' | t}`.
+
+38. Add a `translation.json` file in `src/locales` and add the keys you added in the previous step.
