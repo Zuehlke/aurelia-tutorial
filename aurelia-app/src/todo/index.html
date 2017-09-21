@@ -1,7 +1,7 @@
 <template>
     <require from="resources/elements/todo"></require>
-    <h3>Todos</h3>
-    <a route-href="route: Add new todo">Add new todo</a>
+    <h3>${'index.todos' | t}</h3>
+    <a route-href="route: Add new todo" t="index.link_add"></a>
     <ul>
         <li repeat.for="item of todos">
             <todo item.bind="item"></todo>
